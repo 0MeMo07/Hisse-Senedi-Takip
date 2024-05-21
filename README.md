@@ -1,1 +1,1 @@
-# Hisse-Senedi-Takip-Uygulamas-
+# Hisse-Senedi-Takip
