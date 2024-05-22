@@ -5,12 +5,26 @@ from datetime import datetime
 import tkinter as tk
 from tkinter import ttk, scrolledtext
 import threading
-from stock_monitor import monitor_stocks
 
+# Başlangıçta kaydedilmiş hisseleri yükle
+def load_stocks():
+    try:
+        with open("stocks.txt", "r") as file:
+            stocks = [line.strip() for line in file.readlines()]
+    except FileNotFoundError:
+        stocks = ["KOTON", "ASELS", "TOASO", "TTKOM"]
+    return stocks
 
-stocks = ["KOTON.IS", "ASELS.IS", "TOASO.IS", "TTKOM.IS"]
+# Hisseleri kaydet
+def save_stocks(stocks):
+    with open("stocks.txt", "w") as file:
+        for stock in stocks:
+            file.write(stock + "\n")
+
+stocks = load_stocks()
 price_threshold = 1
 WaitTime = 10
+
 class StockMonitorApp:
 
     def __init__(self, root):
@@ -26,6 +40,7 @@ class StockMonitorApp:
         self.check_prices_thread = threading.Thread(target=self.check_stock_prices)
         self.check_prices_thread.start()
         self.update_threshold()
+    
     def create_widgets(self):
         main_frame = ttk.Frame(self.root, padding="10")
         main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
@@ -84,6 +99,7 @@ class StockMonitorApp:
         if new_stock and new_stock not in self.stocks:
             self.stocks.append(new_stock)
             self.stock_listbox.insert(tk.END, new_stock)
+            save_stocks(self.stocks)
             self.stock_entry.delete(0, tk.END)
 
     def remove_stock(self):
@@ -91,6 +107,7 @@ class StockMonitorApp:
         if selected_stock in self.stocks:
             self.stocks.remove(selected_stock)
             self.stock_listbox.delete(self.stock_listbox.get(0, tk.END).index(selected_stock))
+            save_stocks(self.stocks)
 
     def stop(self):
         self.running = False
