@@ -6,16 +6,14 @@ import tkinter as tk
 from tkinter import ttk, scrolledtext
 import threading
 
-# Başlangıçta kaydedilmiş hisseleri yükle
 def load_stocks():
     try:
         with open("stocks.txt", "r") as file:
             stocks = [line.strip() for line in file.readlines()]
     except FileNotFoundError:
-        stocks = ["KOTON", "ASELS", "TOASO", "TTKOM"]
+        stocks = []
     return stocks
 
-# Hisseleri kaydet
 def save_stocks(stocks):
     with open("stocks.txt", "w") as file:
         for stock in stocks:
@@ -144,8 +142,9 @@ class StockMonitorApp:
     def check_stock_prices(self):
         while self.running:
             for stock in self.stocks:
+                stock_code = stock + ".IS"  # VERI.IS şeklinde veriyi çekiyoruz
                 try:
-                    data = yf.Ticker(stock)
+                    data = yf.Ticker(stock_code)
                     history = data.history(period="5d", interval="1m")
                     if not history.empty:
                         last_close = history['Close'].iloc[-1]
