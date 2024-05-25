@@ -11,6 +11,8 @@ def load_stocks():
         with open("stocks.txt", "r") as file:
             stocks = [line.strip() for line in file.readlines()]
     except FileNotFoundError:
+        with open("stocks.txt", "w") as file:
+            pass
         stocks = []
     return stocks
 
@@ -119,7 +121,9 @@ class StockMonitorApp:
                 for line in log_file:
                     reported_changes.add(line.strip())
         except FileNotFoundError:
-            pass
+            with open("stocks.txt", "w") as log_file:
+                for line in log_file:
+                    reported_changes.add(line.strip())
         return reported_changes
 
     def update_threshold(self):
